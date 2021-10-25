@@ -14,6 +14,7 @@ public:
 
 	Player(int id,std::string name,int rank)
 		:Id(id),Name(name),Rank(rank){}
+	Player() {}
 };
 
 class Hero {
@@ -36,11 +37,17 @@ public:
 
 	Hero(int id, std::string name, int hp,int damage) 
 		:Id(id), Name(name), HP(hp),Damage(damage) {}
+	Hero() {}
 };
 
 
 
 class Team {
+
+public:
 	std::string Name;
-	
+	Hero HeroList [5];
+	Player PlayerList[5];
+	Team(std::string name):Name(name) {}
+	Team(){}
 };

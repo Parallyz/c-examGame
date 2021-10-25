@@ -4,23 +4,18 @@
 #include <ctime>
 #include "classes.h"
 
-class PlayerManager
+ static  class PlayerManager
 {
-	std::list<Player> PlayerList;
+	static std::list<Player> PlayerList;
 
 public:
-	void ShowPlayerInfo(int  id)
+	void  ShowPlayerInfo(Player  player)
 	{
-		for (auto player : PlayerList)
-		{
-			if (player.GetId() == id)
-			{
-				std::cout
-					<< "\tName: " << player.GetName()
-					<< "\tRank: " << player.GetRank() << std::endl;
-			}
 
-		}
+		std::cout
+			<< "\tName: " << player.GetName()
+			<< "\tRank: " << player.GetRank() << std::endl;
+
 	}
 	void  DeletePlayer(int  pos)
 	{
@@ -28,10 +23,11 @@ public:
 		std::advance(iterator, pos);
 		PlayerList.erase(iterator);
 	}
-	void  CreatePlayer(int  id, std::string name, int rank)
+	Player  CreatePlayer(int  id, std::string name, int rank)
 	{
 		Player new_player(id, name, rank);
 		PlayerList.push_back(new_player);
+		return new_player;
 	}
 	Player* GetPlayerByName(std::string name)
 	{
@@ -55,24 +51,18 @@ public:
 };
 
 
-class HeroManager
+static class HeroManager
 {
-	std::list<Hero> HeroList;
+	static std::list<Hero> HeroList;
 
 public:
-	void ShowHeroInfo(int  id)
+	void static  ShowHeroInfo(Hero  hero)
 	{
-		for (auto hero : HeroList)
-		{
-			if (hero.GetId() == id)
-			{
-				std::cout 
-					<< "\tName: " << hero.GetName()
-					<< "\tHP: " << hero.GetHP()
-					<< "\tDamage: " << hero.GetDamage() << std::endl;
-			}
+		std::cout
+			<< "\tName: " << hero.GetName()
+			<< "\tHP: " << hero.GetHP()
+			<< "\tDamage: " << hero.GetDamage() << std::endl;
 
-		}
 	}
 	void  DeleteHero(int  pos)
 	{
@@ -80,10 +70,11 @@ public:
 		std::advance(iterator, pos);
 		HeroList.erase(iterator);
 	}
-	void  CreateHero(int  id, std::string name, int hp, int damage)
+	Hero  CreateHero(int  id, std::string name, int hp, int damage)
 	{
 		Hero new_hero(id, name, hp, damage);
 		HeroList.push_back(new_hero);
+		return new_hero;
 	}
 	Hero* GetHeroByName(std::string name)
 	{
@@ -107,16 +98,36 @@ public:
 };
 
 class TeamManager {
-	void GenerateNewTeam() {}
-	void GetTeamInfo() {}
+	void GenerateNewTeam() {
+		Team team("Team1");
+		
+	}
+	void GetTeamInfo(Team team) {
+		
+		PlayerManager playermanager = PlayerManager();
+		HeroManager heromanager = HeroManager();
+
+		std::cout << "Team: " << team.Name<<std::endl;
+		for (auto elem : team.PlayerList)
+		{
+			playermanager.ShowPlayerInfo(elem);
+		}
+		std::cout<<std::endl << "Heroes" << std::endl;
+		for (auto elem : team.HeroList)
+		{
+			heromanager.ShowHeroInfo(elem);
+		}
+	}
 };
 
 class Session {
-	time_t StartTime;
+	time_t StartTime=time(0);
 	Team TeamOne;
 	Team TeamTwo;
 	Team Winner;
-	void CalculateWinner() {}
+	Team CalculateWinner() {
+
+	}
 };
 
 class GameManager {
