@@ -2,8 +2,12 @@
 #include <list>
 #include <algorithm>
 #include <ctime>
+#include <chrono>
+#include <thread>
 #include <cstdlib>
 #include "classes.h"
+#include <time.h>
+
 
 
 std::string GetRandomHeroName(int random_number)
@@ -64,10 +68,8 @@ std::string GetRandomPlayerName(int random_number)
 	return"Error!";
 }
  
-  class PlayerManager
+ class PlayerManager
 {
-	
-
 public:
 	bool isNameExist(Player playerlist[],int lenght, std::string name)
 	{
@@ -88,13 +90,27 @@ public:
 			<< "\tRank: " << player.GetRank() << std::endl;
 
 	}
-	void  DeletePlayer(Player playerlist[], int lenght,int pos)
+	Player*  DeletePlayer(Player playerlist[], int lenght,int pos)
 	{
-		
+		Player* new_playerlist = new Player[lenght - 1];
+
+		for (int i = 0; i < lenght - 1; i++)
+		{
+			if (pos >= i)
+			{
+				new_playerlist[i] = playerlist[i + 1];
+				continue;
+			}
+			new_playerlist[i] = playerlist[i];
+
+		}
+
+		return new_playerlist;
 	}
-	Player CreatePlayer(Player playerlist[],int lenght)
+	Player CreatePlayer(Player *playerlist,int lenght)
 	{	
-		srand(time(0));
+		srand((unsigned)time(NULL));
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 		int randplayerName = rand() % 20;
 		int randplayerRank = rand() % 1001;
 		int randId = rand() % 1001;
@@ -154,15 +170,28 @@ public:
 			<< "\tDamage: " << hero.GetDamage() << std::endl;
 
 	}
-	void  DeleteHero(std::list<Hero> heroList,int  pos)
+	Hero*  DeleteHero(Hero herolist[], int lenght, int  pos)
 	{
-		std::list<Hero>::iterator iterator = heroList.begin();
-		std::advance(iterator, pos);
-		heroList.erase(iterator);
+		Hero* new_herolist=new Hero[lenght - 1];
+
+		for (int i = 0; i < lenght-1; i++)
+		{
+			if (pos>=i)
+			{
+				new_herolist[i] = herolist[i+1];
+				continue;
+			}
+			new_herolist[i] = herolist[i];
+
+		}
+
+		return new_herolist;
 	}
-	Hero  CreateHero(Hero herolist[], int lenght)
+	Hero  CreateHero(Hero *herolist, int lenght)
 	{		
-		srand(time(0));
+		srand((unsigned)time(NULL));
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
 		int randHeroName = rand() % 20;
 		int randHeroHP = rand() % 101;
 		int randHeroDamage = rand() % 101;
@@ -178,22 +207,22 @@ public:
 
 		return hero;
 	}
-	Hero* GetHeroByName(std::list<Hero> heroList, std::string name)
+	Hero* GetHeroByName(Hero herolist[], int lenght, std::string name)
 	{
-		for (auto hero : heroList)
+		for (int i=0;i<lenght;i++)
 		{
-			if (hero.GetName() == name)
-				return &hero;
+			if (herolist[i].GetName() == name)
+				return &herolist[i];
 		}
 		return nullptr;
 	}
 
-	Hero* GetHeroById(std::list<Hero> heroList, int id)
+	Hero* GetHeroById(Hero herolist[], int lenght, int id)
 	{
-		for (auto hero : heroList)
+		for (int i = 0; i < lenght; i++)
 		{
-			if (hero.GetId() == id)
-				return &hero;
+			if (herolist[i].GetId() == id)
+				return &herolist[i];
 		}
 		return nullptr;
 	}
@@ -240,10 +269,10 @@ public:
 
 class Session {
 	time_t StartTime=time(0);
-	Team Winner;
 public:
-	Team TeamOne;
-	Team TeamTwo;
+	Team Winner;
+	 Team TeamOne;
+	 Team TeamTwo;
 	void CalculateWinner() {
 
 		int first_team_hp = GetTeamHP(TeamOne);
@@ -258,13 +287,16 @@ public:
 			RemoveRank(TeamOne);
 
 			Winner = TeamTwo;
+		
 		}
 		else
 		{
 
 			AddRank(TeamOne);
 			RemoveRank(TeamTwo);
+
 			Winner = TeamOne;
+			
 
 		}
 	}
@@ -287,19 +319,23 @@ public:
 		}
 		return SumDamage;
 	}
-	void AddRank(Team& winnerTeam)
+	
+	void AddRank( Team& winnerTeam)
 	{
-		for (auto player : winnerTeam.PlayerList)
-		{
+		for (auto &player : winnerTeam.PlayerList)
+		{			
 			player.SetRank(player.GetRank() + 25);
 		}
+
+		
 	}
-	void RemoveRank(Team& looserTeam)
+
+	void RemoveRank( Team& looserTeam)
 	{
-		for (auto player : looserTeam.PlayerList)
+		for (auto &player : looserTeam.PlayerList)
 		{
 			player.SetRank(player.GetRank() - 25);
-		}
+		}	
 	}
 };
 
@@ -314,20 +350,30 @@ public:
 		Session session=Session();
 		session.TeamOne = team1;
 		session.TeamTwo = team2;
+		std::cout<<"Start Game" << std::endl;
 
-		teamManager.GetTeamInfo(team1);
+		teamManager.GetTeamInfo(session.TeamOne);
 		std::cout <<std:: endl;
 
-		teamManager.GetTeamInfo(team2);
+		teamManager.GetTeamInfo(session.TeamTwo);
 		std::cout << std::endl;
 
 		session.CalculateWinner();
-
-		teamManager.GetTeamInfo(team1);
+		std::cout << "Game Result" << std::endl;
+		std::cout << "Winner" << std::endl;
+		std::cout << std::endl;
 		std::cout << std::endl;
 
-		teamManager.GetTeamInfo(team2);
+		teamManager.GetTeamInfo(session.Winner);
 		std::cout << std::endl;
+		std::cout << std::endl;
+
+		teamManager.GetTeamInfo(session.TeamOne);
+		std::cout << std::endl;
+
+		teamManager.GetTeamInfo(session.TeamTwo);
+		std::cout << std::endl;
+
 
 		GameSessions.push_back(session);
 	};
