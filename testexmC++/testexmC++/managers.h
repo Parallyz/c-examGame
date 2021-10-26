@@ -2,13 +2,84 @@
 #include <list>
 #include <algorithm>
 #include <ctime>
+#include <cstdlib>
 #include "classes.h"
 
- static  class PlayerManager
+
+std::string GetRandomHeroName(int random_number)
 {
-	static std::list<Player> PlayerList;
+	switch (random_number)
+	{
+	case 0:return "Goblin";
+	case 1: return "Orc";
+	case 2: return "Dragon";
+	case 3: return "Ogre";
+	case 4: return "Skeleton";
+	case 5: return "Troll";
+	case 6: return "Vempire";
+	case 7: return "Zombie";
+	case 8: return "Human";
+	case 9: return "Amplify";
+	case 10: return "Urchin";
+	case 11: return "Blaze";
+	case 12: return "Cannonade";
+	case 13: return "Kraken";
+	case 14: return "Bulletproof";
+	case 15: return "Fortitude";
+	case 16: return "Tradewind";
+	case 17: return "Apex";
+	case 18: return "Tarantula";
+	case 19: return "Chromium";
+	case 20: return "Shockwave";
+	}
+	return"Error!";
+}
+
+std::string GetRandomPlayerName(int random_number)
+{
+	switch (random_number)
+	{
+	case 0:return "Adams";
+	case 1: return "Baker";
+	case 2: return "Clark";
+	case 3: return "Davis";
+	case 4: return "Evans";
+	case 5: return "Ghosh";
+	case 6: return "Frank";
+	case 7: return "Hills";
+	case 8: return "Irwin";
+	case 9: return "Jones";
+	case 10: return "Klein";
+	case 11: return "Lopez";
+	case 12: return "Mason";
+	case 13: return "Nalty";
+	case 14: return "Ochoa";
+	case 15: return "Patel";
+	case 16: return "Quinn";
+	case 17: return "Reily";
+	case 18: return "Smith";
+	case 19: return "Trott";
+	case 20: return "Usman";
+	}
+	return"Error!";
+}
+ 
+  class PlayerManager
+{
+	
 
 public:
+	bool isNameExist(Player playerlist[],int lenght, std::string name)
+	{
+		for (int i=0;i<lenght;i++)
+		{
+			if (playerlist[i].GetName() == name)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 	void  ShowPlayerInfo(Player  player)
 	{
 
@@ -17,45 +88,64 @@ public:
 			<< "\tRank: " << player.GetRank() << std::endl;
 
 	}
-	void  DeletePlayer(int  pos)
+	void  DeletePlayer(Player playerlist[], int lenght,int pos)
 	{
-		std::list<Player>::iterator iterator = PlayerList.begin();
-		std::advance(iterator, pos);
-		PlayerList.erase(iterator);
+		
 	}
-	Player  CreatePlayer(int  id, std::string name, int rank)
-	{
-		Player new_player(id, name, rank);
-		PlayerList.push_back(new_player);
-		return new_player;
-	}
-	Player* GetPlayerByName(std::string name)
-	{
-		for (auto player : PlayerList)
+	Player CreatePlayer(Player playerlist[],int lenght)
+	{	
+		srand(time(0));
+		int randplayerName = rand() % 20;
+		int randplayerRank = rand() % 1001;
+		int randId = rand() % 1001;
+
+		std::string Name = GetRandomPlayerName(randplayerName);
+		while (isNameExist(playerlist, lenght, Name))
 		{
-			if (player.GetName() == name)
-				return &player;
+			Name = GetRandomPlayerName(randplayerName);
+		}
+		Player player(randId,Name,randplayerRank);
+
+		return player;
+	}
+	Player* GetPlayerByName(Player playerlist[], int lenght,std::string name)
+	{
+		for (int i=0;i<lenght;i++)
+		{
+			if (playerlist[i].GetName() == name)
+				return &playerlist[i];
 		}
 		return nullptr;
 	}
 
-	Player* GetPlayerById(int id)
+	Player* GetPlayerById(Player playerlist[], int lenght,int id)
 	{
-		for (auto player : PlayerList)
+		for (int i = 0; i < lenght; i++)
 		{
-			if (player.GetId() == id)
-				return &player;
+			if (playerlist[i].GetId() == id)
+				return &playerlist[i];
 		}
 		return nullptr;
 	}
 };
 
 
-static class HeroManager
+ class HeroManager
 {
-	static std::list<Hero> HeroList;
+
 
 public:
+	bool isNameExist(Hero herolist[], int lenght, std::string name)
+	{
+		for (int i = 0; i < lenght; i++)
+		{
+			if (herolist[i].GetName() == name)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 	void static  ShowHeroInfo(Hero  hero)
 	{
 		std::cout
@@ -64,21 +154,33 @@ public:
 			<< "\tDamage: " << hero.GetDamage() << std::endl;
 
 	}
-	void  DeleteHero(int  pos)
+	void  DeleteHero(std::list<Hero> heroList,int  pos)
 	{
-		std::list<Hero>::iterator iterator = HeroList.begin();
+		std::list<Hero>::iterator iterator = heroList.begin();
 		std::advance(iterator, pos);
-		HeroList.erase(iterator);
+		heroList.erase(iterator);
 	}
-	Hero  CreateHero(int  id, std::string name, int hp, int damage)
-	{
-		Hero new_hero(id, name, hp, damage);
-		HeroList.push_back(new_hero);
-		return new_hero;
+	Hero  CreateHero(Hero herolist[], int lenght)
+	{		
+		srand(time(0));
+		int randHeroName = rand() % 20;
+		int randHeroHP = rand() % 101;
+		int randHeroDamage = rand() % 101;
+
+		int randId = rand() % 1001;
+
+		std::string Name = GetRandomHeroName(randHeroName);
+		while (isNameExist(herolist, lenght, Name))
+		{
+			Name = GetRandomHeroName(randHeroName);
+		}
+		Hero hero(randId, Name, randHeroHP,randHeroDamage);
+
+		return hero;
 	}
-	Hero* GetHeroByName(std::string name)
+	Hero* GetHeroByName(std::list<Hero> heroList, std::string name)
 	{
-		for (auto hero : HeroList)
+		for (auto hero : heroList)
 		{
 			if (hero.GetName() == name)
 				return &hero;
@@ -86,9 +188,9 @@ public:
 		return nullptr;
 	}
 
-	Hero* GetHeroById(int id)
+	Hero* GetHeroById(std::list<Hero> heroList, int id)
 	{
-		for (auto hero : HeroList)
+		for (auto hero : heroList)
 		{
 			if (hero.GetId() == id)
 				return &hero;
@@ -98,11 +200,27 @@ public:
 };
 
 class TeamManager {
-	void GenerateNewTeam() {
-		Team team("Team1");
+public:
+	Team GenerateNewTeam(std::string TeamName) {
+
+		PlayerManager playermanager = PlayerManager();
+		HeroManager heromanager = HeroManager();
+
+
+		Hero newHerolist[5];
+		Player newPlayerlist[5];
+
+		for (int i = 0; i < 5; i++)
+		{
+			newHerolist[i]=heromanager.CreateHero(newHerolist, 5);
+			newPlayerlist[i] = playermanager.CreatePlayer(newPlayerlist, 5);
+		}
+		
+		Team team(TeamName,newHerolist,newPlayerlist);
+		return team;
 		
 	}
-	void GetTeamInfo(Team team) {
+	void GetTeamInfo(Team &team) {
 		
 		PlayerManager playermanager = PlayerManager();
 		HeroManager heromanager = HeroManager();
@@ -122,16 +240,95 @@ class TeamManager {
 
 class Session {
 	time_t StartTime=time(0);
+	Team Winner;
+public:
 	Team TeamOne;
 	Team TeamTwo;
-	Team Winner;
-	Team CalculateWinner() {
+	void CalculateWinner() {
 
+		int first_team_hp = GetTeamHP(TeamOne);
+		int second_team_hp = GetTeamHP(TeamTwo);
+
+		int first_team_damage = GetTeamDamage(TeamOne);
+		int second_team_damage = GetTeamDamage(TeamTwo);
+
+		if (second_team_hp - first_team_damage > first_team_hp - second_team_damage)
+		{
+			AddRank(TeamTwo);
+			RemoveRank(TeamOne);
+
+			Winner = TeamTwo;
+		}
+		else
+		{
+
+			AddRank(TeamOne);
+			RemoveRank(TeamTwo);
+			Winner = TeamOne;
+
+		}
+	}
+
+	int GetTeamHP(Team& team)
+	{
+		int SumHp = 0;
+		for (auto hero : team.HeroList)
+		{
+			SumHp+=hero.GetHP();
+		}
+		return SumHp;
+	}
+	int GetTeamDamage(Team& team)
+	{
+		int SumDamage = 0;
+		for (auto hero : team.HeroList)
+		{
+			SumDamage += hero.GetDamage();
+		}
+		return SumDamage;
+	}
+	void AddRank(Team& winnerTeam)
+	{
+		for (auto player : winnerTeam.PlayerList)
+		{
+			player.SetRank(player.GetRank() + 25);
+		}
+	}
+	void RemoveRank(Team& looserTeam)
+	{
+		for (auto player : looserTeam.PlayerList)
+		{
+			player.SetRank(player.GetRank() - 25);
+		}
 	}
 };
 
 class GameManager {
 	std::list<Session> GameSessions;
+public:
+	void PerformGameSession() {
+		TeamManager teamManager= TeamManager();
+		Team team1 = teamManager.GenerateNewTeam("Dire");
+		Team team2 = teamManager.GenerateNewTeam("Radiant");
 
-	void PerformGameSession() {};
+		Session session=Session();
+		session.TeamOne = team1;
+		session.TeamTwo = team2;
+
+		teamManager.GetTeamInfo(team1);
+		std::cout <<std:: endl;
+
+		teamManager.GetTeamInfo(team2);
+		std::cout << std::endl;
+
+		session.CalculateWinner();
+
+		teamManager.GetTeamInfo(team1);
+		std::cout << std::endl;
+
+		teamManager.GetTeamInfo(team2);
+		std::cout << std::endl;
+
+		GameSessions.push_back(session);
+	};
 };
